@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hard-Coded Movie Jukebox</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1f2937; /* Dark background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+        .jukebox-card {
+            background-color: #374151; /* Medium dark card */
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            border: 4px solid #4b5563;
+        }
+        .display-screen {
+            min-height: 10rem;
+            background: linear-gradient(135deg, #10b981, #059669); /* Emerald Green Theme */
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 4px solid #047857;
+        }
+        .song-title {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .scrollable-list {
+            max-height: 50vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        /* Custom scrollbar for aesthetics */
+        .scrollable-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background: #10b981;
+            border-radius: 10px;
+        }
+        .scrollable-list::-webkit-scrollbar-track {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="jukebox-card">
+        <!-- Jukebox Display Screen -->
+        <div id="display" class="display-screen">
+            <p class="text-lg font-semibold uppercase tracking-widest mb-2 text-emerald-200" id="current-status">
+                WELCOME
+            </p>
+            <p class="text-3xl sm:text-4xl font-extrabold song-title" id="current-song">
+                Click a Movie to Play its Song!
+            </p>
+            <p class="text-base font-medium text-emerald-200 mt-2" id="current-movie"></p>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="p-6">
+            <h3 class="text-xl font-bold mb-4 text-white border-b border-gray-600 pb-2">
+                Movie Soundtrack Hits (Hard-Coded)
+            </h3>
+            
+            <!-- Movie Selection List -->
+            <div id="movie-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4 scrollable-list">
+                <!-- List items will be generated here by JavaScript -->
+            </div>
+            
+            <p class="text-sm text-center text-gray-400 mt-6">
+                This list is hard-coded and cannot be edited.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. HARD-CODED DATA ---
+        const movieSoundtracks = [
+            { movie: "Mamma Mia!", song: "Dancing Queen", artist: "ABBA" },
+            { movie: "Moulin Rouge!", song: "Your Song", artist: "Elton John" },
+            { movie: "Bohemian Rhapsody", song: "Bohemian Rhapsody", artist: "Queen" },
+            { movie: "Rocketman", song: "Tiny Dancer", artist: "Elton John" },
+            { movie: "Across the Universe", song: "Hey Jude", artist: "The Beatles" },
+            { movie: "Pulp Fiction", song: "You Never Can Tell", artist: "Chuck Berry" },
+            { movie: "Rock of Ages", song: "Don't Stop Believin'", artist: "Journey" },
+            { movie: "Titanic", song: "My Heart Will Go On", artist: "Celine Dion" },
+            { movie: "A Star Is Born (2018)", song: "Shallow", artist: "Lady Gaga & Bradley Cooper" },
+            { movie: "Dirty Dancing", song: "(I've Had) The Time of My Life", artist: "Bill Medley & Jennifer Warnes" },
+        ];
+
+        // --- 2. UI ELEMENTS ---
+        const statusDisplay = document.getElementById('current-status');
+        const songDisplay = document.getElementById('current-song');
+        const movieDisplay = document.getElementById('current-movie');
+        const movieListContainer = document.getElementById('movie-list');
+
+        /**
+         * Updates the display when a song is "played".
+         */
+        function playMovieSong(movieTitle, songTitle, artist) {
+            statusDisplay.textContent = "NOW PLAYING";
+            songDisplay.textContent = ""; // Clear for animation effect
+            movieDisplay.textContent = "";
+
+            // Simple debounce/animation to show a state change
+            setTimeout(() => {
+                songDisplay.textContent = songTitle;
+                movieDisplay.innerHTML = `From: <span class="font-bold">${movieTitle}</span> | Artist: ${artist}`;
+            }, 50); 
+        }
+        
+        /**
+         * Renders the static list of movie soundtracks on initialization.
+         */
+        function renderJukeboxList() {
+            movieListContainer.innerHTML = ''; // Clear existing list
+
+            // Define card colors for visual variety
+            const colors = [
+                { bg: 'bg-red-600', hover: 'hover:bg-red-700' },
+                { bg: 'bg-blue-600', hover: 'hover:bg-blue-700' },
+                { bg: 'bg-purple-600', hover: 'hover:bg-purple-700' },
+                { bg: 'bg-yellow-600', hover: 'hover:bg-yellow-700' }
+            ];
+
+            movieSoundtracks.forEach((data, index) => {
+                const button = document.createElement('button');
+                const color = colors[index % colors.length];
+
+                button.className = `w-full p-4 rounded-xl text-left text-white font-bold transform shadow-lg 
+                                    ${color.bg} ${color.hover} active:scale-[.98] transition flex flex-col justify-center space-y-1`;
+                
+                button.innerHTML = `
+                    <span class="text-xs opacity-80 uppercase">${data.movie}</span>
+                    <span class="text-xl leading-snug">${data.song}</span>
+                    <span class="text-sm opacity-70 italic">- ${data.artist}</span>
+                `;
+                
+                button.addEventListener('click', () => playMovieSong(data.movie, data.song, data.artist));
+
+                movieListContainer.appendChild(button);
+            });
+        }
+
+        // --- 3. INITIALIZATION ---
+        window.onload = renderJukeboxList;
+
+    </script>
+
+</body>
+</html>
